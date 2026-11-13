@@ -40,8 +40,8 @@ export default function CounterfactualLab({ campus }) {
   const { regions, selectedRegionId, selectRegion, runIntervention } = campus
 
   // Interactive Parameter State
-  const [targetId, setTargetId] = useState('canteen-a')
-  const [destId, setDestId] = useState('canteen-b')
+  const [targetId, setTargetId] = useState('stationery-1')
+  const [destId, setDestId] = useState('stationery-2')
   const [redirectPct, setRedirectPct] = useState(35)
   const [additionalCounters, setAdditionalCounters] = useState(1)
   const [availableStaff, setAvailableStaff] = useState(2)

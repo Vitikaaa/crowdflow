@@ -4,7 +4,7 @@
  * Models multi-region network flow conservation, transit lag, and downstream capacity ripple effects.
  */
 
-import { CAMPUS_NODES, CAMPUS_EDGES, getRegionById } from './campusGraph.js'
+import { CAMPUS_NODES, CAMPUS_EDGES, getRegionById, resolveRegionId } from './campusGraph.js'
 
 /**
  * Run a multi-region network simulation over time steps [0, 5, 10, 15, 20] min
@@ -14,8 +14,8 @@ import { CAMPUS_NODES, CAMPUS_EDGES, getRegionById } from './campusGraph.js'
  */
 export function simulateNetworkScenario(baselineStates, interventionDef) {
   const timeSteps = [0, 5, 10, 15, 20]
-  const targetId = interventionDef.targetRegionId || 'canteen-a'
-  const destId = interventionDef.destinationRegionId || 'canteen-b'
+  const targetId = resolveRegionId(interventionDef.targetRegionId || 'stationery-1')
+  const destId = resolveRegionId(interventionDef.destinationRegionId || 'stationery-2')
   
   // Clone initial regional states
   const regionStates = {}
@@ -25,12 +25,12 @@ export function simulateNetworkScenario(baselineStates, interventionDef) {
       id: node.id,
       name: node.name,
       capacity: node.capacity,
-      occupancy: base.occupancy ?? (node.id === 'canteen-a' ? 42 : node.id === 'canteen-b' ? 22 : Math.round(node.capacity * 0.45)),
-      arrivalRate: base.arrivalRate ?? (node.id === 'canteen-a' ? 26 : node.id === 'canteen-b' ? 10 : 12),
-      departureRate: base.departureRate ?? 14,
-      counters: base.counters ?? node.baseCounters ?? 3,
-      queue: base.queue ?? 0,
-      serviceRatePerCounter: 6
+      occupancy: base.occupancy ?? (node.id === targetId ? Math.round(node.capacity * 0.88) : node.id === destId ? Math.round(node.capacity * 0.35) : Math.round(node.capacity * 0.45)),
+      arrivalRate: base.arrivalRate ?? (node.id === targetId ? 18 : node.id === destId ? 6 : 12),
+      departureRate: base.departureRate ?? 10,
+      counters: base.counters ?? node.baseCounters ?? 2,
+      queue: base.queue ?? (node.id === targetId ? 14 : 0),
+      serviceRatePerCounter: node.category === 'dining' ? 9 : 6
     }
   })
 
@@ -60,12 +60,12 @@ export function simulateNetworkScenario(baselineStates, interventionDef) {
   totalCostPoints += additionalStaff * 20    // staff personnel cost
   if (redirectFraction > 0) totalCostPoints += 10 // signage & mobile redirect push cost
 
-  // Walking distance penalty (if redirecting from A to B: 150m, 2.5 min)
+  // Walking distance penalty (if redirecting from target to dest)
   const edgeAB = CAMPUS_EDGES.find(
     (e) => (e.source === targetId && e.target === destId) || (e.source === destId && e.target === targetId)
   )
-  const walkingDistMeters = edgeAB ? edgeAB.distanceMeters : 150
-  const transitLagMin = edgeAB ? edgeAB.transitTimeMin : 2.5
+  const walkingDistMeters = edgeAB ? edgeAB.distanceMeters : 140
+  const transitLagMin = edgeAB ? edgeAB.transitTimeMin : 2.2
 
   // Time stepping simulation
   for (let step = 1; step < timeSteps.length; step++) {
@@ -100,20 +100,19 @@ export function simulateNetworkScenario(baselineStates, interventionDef) {
 
       // Downstream impact: diverted people arrive at destination after transit lag!
       if (node.id === destId && redirectFraction > 0) {
-        // If t >= transitLagMin, diverted students arrive at destination
         if (t >= transitLagMin) {
           const arrivingDiverted = Math.round(regionStates[targetId].arrivalRate * redirectFraction)
           inFlow += arrivingDiverted
         }
       }
 
-      // Autoregressive time progression
-      const naturalSurge = (t === 10 && node.id === 'canteen-a') ? 6 : 0
+      // Natural surge at peak times
+      const naturalSurge = (t === 10 && (node.id === 'annapurna' || node.id === 'stationery-1')) ? 5 : 0
       inFlow += naturalSurge
 
       const netDelta = inFlow - outFlow
       const newOcc = Math.max(0, Math.min(Math.round(state.capacity * 1.35), state.occupancy + netDelta))
-      const newQueue = Math.max(0, newOcc > state.capacity * 0.85 ? newOcc - Math.round(state.capacity * 0.85) : 0)
+      const newQueue = Math.max(0, newOcc > state.capacity * 0.82 ? newOcc - Math.round(state.capacity * 0.82) : 0)
 
       state.occupancy = newOcc
       state.queue = newQueue
@@ -129,8 +128,8 @@ export function simulateNetworkScenario(baselineStates, interventionDef) {
   }
 
   // Summary analysis for target region and downstream region
-  const targetTraj = trajectories[targetId]
-  const destTraj = trajectories[destId]
+  const targetTraj = trajectories[targetId] || trajectories[CAMPUS_NODES[0].id]
+  const destTraj = trajectories[destId] || trajectories[CAMPUS_NODES[1].id]
 
   const peakTargetOcc = Math.max(...targetTraj.map((x) => x.occupancy))
   const peakTargetUtil = Math.max(...targetTraj.map((x) => x.utilizationPct))
@@ -159,7 +158,7 @@ export function simulateNetworkScenario(baselineStates, interventionDef) {
   // Count how many regions exceed threshold (>= 85%) across the network
   let regionsExceedingThreshold = 0
   CAMPUS_NODES.forEach((n) => {
-    const maxUtil = Math.max(...trajectories[n.id].map((x) => x.utilizationPct))
+    const maxUtil = Math.max(...(trajectories[n.id] || []).map((x) => x.utilizationPct))
     if (maxUtil >= 85) regionsExceedingThreshold++
   })
 
@@ -195,44 +194,47 @@ export function simulateNetworkScenario(baselineStates, interventionDef) {
 /**
  * Standard scenario suite generator for comparing options A through F
  */
-export function runStandardScenarioSuite(baselineStates, targetId = 'canteen-a', destId = 'canteen-b') {
+export function runStandardScenarioSuite(baselineStates, targetId = 'stationery-1', destId = 'stationery-2') {
+  const resolvedTarget = resolveRegionId(targetId)
+  const resolvedDest = resolveRegionId(destId)
+
   const scenarios = [
     {
       key: 'A',
-      label: 'Scenario A: No Intervention',
-      description: 'Status quo baseline forecast without active intervention.',
-      targetRegionId: targetId,
-      destinationRegionId: destId,
+      label: 'Scenario A: Status Quo (Baseline)',
+      description: 'Baseline unmanaged flow without active crowd intervention.',
+      targetRegionId: resolvedTarget,
+      destinationRegionId: resolvedDest,
       redirectFraction: 0,
       additionalCounters: 0,
       additionalStaff: 0
     },
     {
       key: 'B',
-      label: 'Scenario B: Redirect to Canteen B',
-      description: 'Redirect 35% of arriving students via digital signage and app to Canteen B.',
-      targetRegionId: targetId,
-      destinationRegionId: destId,
-      redirectFraction: 0.35,
+      label: `Scenario B: Redirect to ${getRegionById(resolvedDest).shortName}`,
+      description: `Divert 40% of incoming visitors from ${getRegionById(resolvedTarget).shortName} to ${getRegionById(resolvedDest).shortName} via digital signage & student app notifications.`,
+      targetRegionId: resolvedTarget,
+      destinationRegionId: resolvedDest,
+      redirectFraction: 0.40,
       additionalCounters: 0,
       additionalStaff: 0
     },
     {
       key: 'C',
-      label: 'Scenario C: Open Additional Counter',
-      description: 'Activate +1 reserve hot-meal service counter to accelerate clearance rate.',
-      targetRegionId: targetId,
-      destinationRegionId: destId,
+      label: 'Scenario C: Open Additional Service Counter',
+      description: 'Activate +1 reserve express clearance window to double serving throughput.',
+      targetRegionId: resolvedTarget,
+      destinationRegionId: resolvedDest,
       redirectFraction: 0,
       additionalCounters: 1,
       additionalStaff: 0
     },
     {
       key: 'D',
-      label: 'Scenario D: Deploy Rapid-Response Staff',
-      description: 'Deploy 2 crowd marshals to manage queue entry and prevent corridor bottlenecks.',
-      targetRegionId: targetId,
-      destinationRegionId: destId,
+      label: 'Scenario D: Rapid Marshals & Corridor Control',
+      description: 'Deploy 2 trained student marshals to organize line queues and prevent bottleneck congestion.',
+      targetRegionId: resolvedTarget,
+      destinationRegionId: resolvedDest,
       redirectFraction: 0,
       additionalCounters: 0,
       additionalStaff: 2
@@ -240,21 +242,21 @@ export function runStandardScenarioSuite(baselineStates, targetId = 'canteen-a',
     {
       key: 'E',
       label: 'Scenario E: Dynamic Entry Metering',
-      description: 'Stagger entry flow to 16 students / 5 min to cap peak room density.',
-      targetRegionId: targetId,
-      destinationRegionId: destId,
+      description: 'Regulate entrance turnstiles to cap inflow at 14 visitors/5 min, smoothing crowd peaks.',
+      targetRegionId: resolvedTarget,
+      destinationRegionId: resolvedDest,
       redirectFraction: 0,
       additionalCounters: 0,
       additionalStaff: 1,
-      entryMeteringCap: 16
+      entryMeteringCap: 14
     },
     {
       key: 'F',
-      label: 'Scenario F: Hybrid Orchestration',
-      description: 'Balanced strategy: Redirect 20% to Canteen B + Activate 1 counter.',
-      targetRegionId: targetId,
-      destinationRegionId: destId,
-      redirectFraction: 0.20,
+      label: 'Scenario F: Full Campus Hybrid Orchestration',
+      description: `Optimized multi-pronged strategy: Divert 25% traffic to ${getRegionById(resolvedDest).shortName} + Activate 1 counter + 1 marshal.`,
+      targetRegionId: resolvedTarget,
+      destinationRegionId: resolvedDest,
+      redirectFraction: 0.25,
       additionalCounters: 1,
       additionalStaff: 1
     }

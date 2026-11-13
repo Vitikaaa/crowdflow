@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { CampusStore } from './engine/stateStore.js'
+import { resolveRegionId, getRegionById } from './engine/campusGraph.js'
 
 export function useCampus() {
   const [state, setState] = useState(() => CampusStore.getState())
@@ -18,11 +19,47 @@ export function useCampus() {
     setTimeout(() => {
       setState({ ...CampusStore.getState() })
       setLoading(false)
-    }, 250)
+    }, 200)
   }, [])
 
   const selectRegion = useCallback((id) => {
-    CampusStore.setSelectedRegion(id)
+    CampusStore.selectRegion(id)
+  }, [])
+
+  const setUserRole = useCallback((role) => {
+    CampusStore.setUserRole(role)
+  }, [])
+
+  const login = useCallback((role, credentials) => {
+    return CampusStore.login(role, credentials)
+  }, [])
+
+  const logout = useCallback(() => {
+    CampusStore.logout()
+  }, [])
+
+  const generateToken = useCallback((facilityId, serviceType) => {
+    return CampusStore.generateToken(facilityId, serviceType)
+  }, [])
+
+  const cancelToken = useCallback((tokenId) => {
+    CampusStore.cancelToken(tokenId)
+  }, [])
+
+  const callNextToken = useCallback((facilityId) => {
+    return CampusStore.callNextToken(facilityId)
+  }, [])
+
+  const updateFacilitySettings = useCallback((facilityId, patch, actionLabel) => {
+    CampusStore.updateFacilitySettings(facilityId, patch, actionLabel)
+  }, [])
+
+  const broadcastAnnouncement = useCallback((announcement) => {
+    CampusStore.broadcastAnnouncement(announcement)
+  }, [])
+
+  const redirectCrowd = useCallback((sourceId, destId, fraction) => {
+    CampusStore.redirectCrowd(sourceId, destId, fraction)
   }, [])
 
   const dismissAlert = useCallback((id) => {
@@ -33,36 +70,28 @@ export function useCampus() {
     CampusStore.advanceSimulationStep()
   }, [])
 
-  const triggerSpike = useCallback(() => {
-    CampusStore.triggerArrivalSpike()
-  }, [])
-
   const resetAll = useCallback(() => {
     CampusStore.resetToDefault()
   }, [])
 
-  const runIntervention = useCallback((scenarioKey, notes) => {
-    return CampusStore.executeIntervention(scenarioKey, notes)
+  const runIntervention = useCallback((scenarioKey) => {
+    return CampusStore.executeIntervention(scenarioKey)
   }, [])
 
-  const updateWeights = useCallback((weights) => {
-    CampusStore.updateObjectiveWeights(weights)
-  }, [])
-
-  // Adapt for backwards compatibility with existing components
   const regionsArray = Object.values(state.regions || {})
   const activeAlerts = (state.alerts || []).filter(
     (a) => !state.dismissedAlertIds?.includes(a.id)
   )
 
-  const selectedRegion = state.regions?.[state.selectedRegionId] || regionsArray[0]
+  const resolvedSelectedId = resolveRegionId(state.selectedRegionId)
+  const selectedRegion = state.regions?.[resolvedSelectedId] || regionsArray[0]
 
   return {
     loading,
     state,
     regions: regionsArray,
     regionsMap: state.regions,
-    selectedRegionId: state.selectedRegionId,
+    selectedRegionId: resolvedSelectedId,
     selectedRegion,
     edges: state.edges,
     forecasts: state.forecasts,
@@ -74,19 +103,37 @@ export function useCampus() {
     errorMetrics: state.errorMetrics,
     recalibrationLogs: state.recalibrationLogs,
     activeInterventions: state.activeInterventions,
-    interventionHistory: state.interventionHistory,
     simulationClock: state.simulationClock,
     stepCount: state.stepCount,
     objectiveWeights: state.objectiveWeights,
     operationalLimits: state.operationalLimits,
-    source: 'engine',
+    userRole: state.userRole || 'admin',
+    isAuthenticated: state.isAuthenticated !== false,
+    currentUser: state.currentUser || {
+      id: 'usr-admin',
+      name: 'Admin (Lalit)',
+      email: 'admin@vnrvjiet.in',
+      role: 'admin'
+    },
+    tokens: state.tokens || [],
+    tokenHistory: state.tokenHistory || [],
+    actionHistory: state.actionHistory || [],
+    announcements: state.announcements || [],
+    facilitySettings: state.facilitySettings || {},
     refresh,
     selectRegion,
+    setUserRole,
+    login,
+    logout,
+    generateToken,
+    cancelToken,
+    callNextToken,
+    updateFacilitySettings,
+    broadcastAnnouncement,
+    redirectCrowd,
     dismissAlert,
     advanceStep,
-    triggerSpike,
     resetAll,
-    runIntervention,
-    updateWeights
+    runIntervention
   }
 }

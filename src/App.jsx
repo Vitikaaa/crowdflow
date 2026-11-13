@@ -1,72 +1,194 @@
 import { useState } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
-import { Menu, Waves } from 'lucide-react'
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
+import { Menu, Layers, Shield, GraduationCap, LogOut } from 'lucide-react'
 import Sidebar from './components/Sidebar.jsx'
-import Dashboard from './pages/Dashboard.jsx'
-import LiveMonitoringPage from './pages/LiveMonitoringPage.jsx'
-import PredictionsPage from './pages/PredictionsPage.jsx'
-import CounterfactualLab from './pages/CounterfactualLab.jsx'
-import OrchestrationPage from './pages/OrchestrationPage.jsx'
-import AnalyticsPage from './pages/AnalyticsPage.jsx'
-import AlertsPage from './pages/AlertsPage.jsx'
-import SettingsPage from './pages/SettingsPage.jsx'
+import CampusOverviewPage from './pages/admin/CampusOverviewPage.jsx'
+import CrowdQueueControlPage from './pages/admin/CrowdQueueControlPage.jsx'
+import SmartDecisionsPage from './pages/admin/SmartDecisionsPage.jsx'
+import ExploreCampusPage from './pages/student/ExploreCampusPage.jsx'
+import MyQueuesPage from './pages/student/MyQueuesPage.jsx'
+import MyAccountPage from './pages/student/MyAccountPage.jsx'
+import LoginPage from './pages/auth/LoginPage.jsx'
 import { useCampus } from './hooks.js'
 
 export default function App() {
-  const [open, setOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const campus = useCampus()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { userRole = 'admin', setUserRole, isAuthenticated = true, logout, tokens = [] } = campus
+
+  const handleToggleRole = () => {
+    const nextRole = userRole === 'admin' ? 'student' : 'admin'
+    if (setUserRole) setUserRole(nextRole)
+    if (nextRole === 'admin') {
+      navigate('/admin/overview')
+    } else {
+      navigate('/student/explore')
+    }
+  }
+
+  const handleLogout = () => {
+    if (logout) logout()
+    navigate('/login')
+  }
+
+  // If on login route, render standalone without shell
+  if (location.pathname === '/login') {
+    return <LoginPage campus={campus} />
+  }
 
   return (
-    <div className="min-h-screen bg-cream text-ink font-sans selection:bg-coral selection:text-ink">
+    <div className="min-h-screen bg-[#FAF7F2] text-[#130722] font-sans selection:bg-[#FFAE96] selection:text-[#130722]">
+      {/* Sidebar Navigation matching image */}
       <Sidebar
-        open={open}
-        onClose={() => setOpen(false)}
-        alertCount={campus.alerts?.length || 0}
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        userRole={userRole}
+        onToggleRole={handleToggleRole}
+        onLogout={handleLogout}
+        activeQueueCount={tokens.filter((t) => t.status === 'In Queue').length}
       />
 
+      {/* Main Content Area */}
       <div className="lg:pl-64 flex flex-col min-h-screen">
         {/* Mobile Header Bar */}
-        <div className="lg:hidden flex items-center justify-between p-4 bg-ink text-cream border-b border-white/10 sticky top-0 z-20">
+        <div className="lg:hidden flex items-center justify-between p-4 bg-[#130722] text-white sticky top-0 z-30 border-b border-white/10 shadow-sm">
           <button
-            onClick={() => setOpen(true)}
+            onClick={() => setSidebarOpen(true)}
             aria-label="Open menu"
-            className="rounded-xl bg-white/10 p-2 text-cream hover:bg-white/20 transition"
+            className="rounded-xl bg-white/10 p-2 text-white hover:bg-white/20 transition"
           >
             <Menu size={20} />
           </button>
           <div className="flex items-center gap-2">
-            <span className="grid place-items-center size-7 rounded-lg bg-coral text-ink font-black">
-              <Waves size={16} />
+            <span className="grid place-items-center size-8 rounded-xl bg-[#FFAE96] text-[#130722] font-black">
+              <Layers size={18} />
             </span>
             <span className="font-black text-base tracking-tight">CrowdFlow</span>
           </div>
-          <span className="text-xs bg-peach/30 text-peach px-2 py-0.5 rounded-full font-bold">
-            Live
-          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleToggleRole}
+              className="px-2.5 py-1 rounded-xl bg-white/10 text-xs font-bold text-[#FFAE96] flex items-center gap-1"
+            >
+              {userRole === 'admin' ? <Shield size={12} /> : <GraduationCap size={12} />}
+              <span>{userRole === 'admin' ? 'Admin' : 'Student'}</span>
+            </button>
+            <button
+              onClick={handleLogout}
+              className="p-1 rounded-lg text-white/70 hover:text-rose-400"
+              title="Sign Out"
+            >
+              <LogOut size={16} />
+            </button>
+          </div>
         </div>
 
-        {/* Main Routed Content */}
-        <main className="mx-auto max-w-7xl w-full p-4 sm:p-6 lg:p-8 flex-1">
+        {/* Primary Page Routed Content */}
+        <main className="mx-auto max-w-[1500px] w-full p-4 sm:p-6 lg:p-8 flex-1">
           <Routes>
-            <Route path="/" element={<Dashboard campus={campus} />} />
-            <Route path="/monitoring" element={<LiveMonitoringPage campus={campus} />} />
-            <Route path="/predictions" element={<PredictionsPage campus={campus} />} />
-            <Route path="/counterfactual" element={<CounterfactualLab campus={campus} />} />
-            <Route path="/orchestration" element={<OrchestrationPage campus={campus} />} />
-            {/* Backwards compatibility for old recommendations link */}
-            <Route path="/recommendations" element={<Navigate to="/orchestration" replace />} />
-            <Route path="/analytics" element={<AnalyticsPage campus={campus} />} />
-            <Route path="/alerts" element={<AlertsPage campus={campus} />} />
-            <Route path="/settings" element={<SettingsPage campus={campus} />} />
+            {/* Login Route */}
+            <Route path="/login" element={<LoginPage campus={campus} />} />
+
+            {/* Root Route Redirect based on Active Role */}
+            <Route
+              path="/"
+              element={
+                !isAuthenticated ? (
+                  <Navigate to="/login" replace />
+                ) : userRole === 'admin' ? (
+                  <Navigate to="/admin/overview" replace />
+                ) : (
+                  <Navigate to="/student/explore" replace />
+                )
+              }
+            />
+
+            {/* ADMINISTRATOR PORTAL (3 Core Pages) */}
+            <Route
+              path="/admin/overview"
+              element={
+                !isAuthenticated ? (
+                  <Navigate to="/login" replace />
+                ) : (
+                  <CampusOverviewPage campus={campus} />
+                )
+              }
+            />
+            <Route
+              path="/admin/control"
+              element={
+                !isAuthenticated ? (
+                  <Navigate to="/login" replace />
+                ) : (
+                  <CrowdQueueControlPage campus={campus} />
+                )
+              }
+            />
+            <Route
+              path="/admin/decisions"
+              element={
+                !isAuthenticated ? (
+                  <Navigate to="/login" replace />
+                ) : (
+                  <SmartDecisionsPage campus={campus} />
+                )
+              }
+            />
+
+            {/* STUDENT PORTAL (3 Core Pages) */}
+            <Route
+              path="/student/explore"
+              element={
+                !isAuthenticated ? (
+                  <Navigate to="/login" replace />
+                ) : (
+                  <ExploreCampusPage campus={campus} />
+                )
+              }
+            />
+            <Route
+              path="/student/queues"
+              element={
+                !isAuthenticated ? (
+                  <Navigate to="/login" replace />
+                ) : (
+                  <MyQueuesPage campus={campus} />
+                )
+              }
+            />
+            <Route
+              path="/student/account"
+              element={
+                !isAuthenticated ? (
+                  <Navigate to="/login" replace />
+                ) : (
+                  <MyAccountPage campus={campus} />
+                )
+              }
+            />
+
+            {/* Legacy URL Backward Compatibility Aliases */}
+            <Route path="/dashboard" element={<Navigate to="/admin/overview" replace />} />
+            <Route path="/map" element={<Navigate to="/admin/overview" replace />} />
+            <Route path="/monitoring" element={<Navigate to="/admin/control" replace />} />
+            <Route path="/predictions" element={<Navigate to="/admin/overview" replace />} />
+            <Route path="/counterfactual" element={<Navigate to="/admin/decisions" replace />} />
+            <Route path="/orchestration" element={<Navigate to="/admin/decisions" replace />} />
+            <Route path="/analytics" element={<Navigate to="/admin/overview" replace />} />
+            <Route path="/alerts" element={<Navigate to="/admin/overview" replace />} />
+            <Route path="/settings" element={<Navigate to="/student/account" replace />} />
+
+            {/* Catch-all fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
 
         {/* Minimal Footer */}
-        <footer className="border-t border-ink/10 py-4 px-6 text-center text-xs font-semibold text-ink/80">
-          CrowdFlow · A System and Method for Predictive Counterfactual Orchestration of Crowd Flow Across Interconnected Service Regions
+        <footer className="border-t border-ink/5 py-4 px-6 text-center text-xs font-semibold text-ink/50">
+          CrowdFlow &middot; VNR VJIET Campus Crowd Management &amp; Digital Twin Platform
         </footer>
-
       </div>
     </div>
   )

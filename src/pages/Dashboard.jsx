@@ -16,6 +16,7 @@ import {
   Info
 } from 'lucide-react'
 import StatCard from '../components/StatCard.jsx'
+import CampusMap from '../components/CampusMap.jsx'
 import NetworkGraph from '../components/NetworkGraph.jsx'
 import LocationSelector from '../components/LocationSelector.jsx'
 import PredictionChart from '../components/PredictionChart.jsx'
@@ -212,29 +213,24 @@ export default function Dashboard({ campus }) {
         />
       </section>
 
-      {/* Interactive 2D Schematic Digital Twin Network */}
-      <section className="card bg-white/80 p-5">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+      {/* Interactive Dynamic Synthetic Campus Map */}
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-bold text-ink">Campus Interconnected Digital Twin</h2>
-            <p className="text-xs font-medium text-ink/80">
-              Directed graph of 7 service regions. Edge arrows show directional flow rates and transit walking times.
+            <h2 className="text-xl font-black text-ink">VNR VJIET Dynamic Campus Map</h2>
+            <p className="text-xs font-semibold text-ink/75">
+              Interactive top-down digital twin. Click buildings to manage crowd flow, get student directions, and test scenarios.
             </p>
           </div>
           <Link
-            to="/monitoring"
-            className="text-xs font-bold text-ink hover:text-coral flex items-center gap-1 transition"
+            to="/map"
+            className="btn bg-white hover:bg-cream text-ink text-xs font-bold py-2 px-3.5 border border-ink/10 shadow-xs flex items-center gap-1.5 transition"
           >
-            Open Multi-Modal Sensor Fusion <ArrowRight size={14} />
+            Open Fullscreen Map <ArrowRight size={14} />
           </Link>
         </div>
 
-        <NetworkGraph
-          regions={regions}
-          edges={edges}
-          selectedId={selectedRegionId}
-          onSelect={selectRegion}
-        />
+        <CampusMap campus={campus} height="580px" />
       </section>
 
       {/* Regional Selector & Detailed Telemetry */}

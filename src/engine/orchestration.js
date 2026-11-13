@@ -5,6 +5,8 @@
  * and synthesizes multi-channel dispatch packages (digital signage, staff orders, mobile app).
  */
 
+import { getRegionById } from './campusGraph.js'
+
 export const DEFAULT_OBJECTIVE_WEIGHTS = {
   capacityExceedance: 35, // High penalty for regional safety capacity exceedance
   downstreamRisk: 25,     // Downstream transfer risk penalty (prevents pushing burden elsewhere)
@@ -130,20 +132,22 @@ export function rankInterventions(scenarios, customWeights = {}, customLimits = 
  * Generate simulated multi-channel dispatch materials
  */
 export function generateDispatchPackage(scenario) {
-  const targetName = scenario.targetRegionId === 'canteen-a' ? 'Canteen A' : 'Target Region'
-  const destName = scenario.destinationRegionId === 'canteen-b' ? 'Canteen B' : 'Secondary Region'
+  const target = getRegionById(scenario.targetRegionId)
+  const dest = getRegionById(scenario.destinationRegionId)
+  const targetName = target ? target.name : 'Primary Facility'
+  const destName = dest ? dest.name : 'Secondary Facility'
 
   let signageText = 'Normal Campus Flow'
   let staffOrder = 'Maintain regular area monitoring.'
   let studentAppNotice = null
 
   if (scenario.key === 'B' || scenario.redirectFraction > 0) {
-    signageText = `⚠️ High Lunch Wait at ${targetName}. Head to ${destName} for faster service (2 min walk).`
-    staffOrder = `Deploy 1 marshal at ${targetName} south vestibule to advise students towards ${destName}.`
+    signageText = `⚠️ High Queue at ${targetName}. Head to ${destName} for faster service (2 min walk).`
+    staffOrder = `Deploy 1 marshal at ${targetName} entrance to advise visitors towards ${destName}.`
     studentAppNotice = {
-      title: `Faster Lunch Option Nearby`,
-      body: `${targetName} is near 90% capacity. Shorter lines and hot lunch counters currently available at ${destName}.`,
-      eta: '2.5 min walking detour'
+      title: `Faster Service Nearby`,
+      body: `${targetName} is near peak queue. Shorter lines and immediate service currently available at ${destName}.`,
+      eta: '2 min walking route'
     }
   } else if (scenario.key === 'C' || scenario.additionalCounters > 0) {
     signageText = `✅ ${targetName}: Express Counter #4 is now OPEN for rapid takeaway orders.`
