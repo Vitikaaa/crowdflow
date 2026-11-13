@@ -12,8 +12,7 @@ import {
   CheckCircle2,
   Sparkles,
   Building2,
-  Zap,
-  Info
+  Zap
 } from 'lucide-react'
 
 export default function LoginPage({ campus }) {
@@ -274,14 +273,6 @@ export default function LoginPage({ campus }) {
               </button>
             </form>
           )}
-
-          {/* Quick Notice Info */}
-          <div className="p-3 rounded-2xl bg-[#FAF7F2] text-[11px] font-semibold text-ink/60 flex items-center gap-2 leading-relaxed">
-            <Info size={16} className="text-ink/40 shrink-0" />
-            <span>
-              Mock institutional authentication for VNR VJIET campus deployment review. No live SSO server required.
-            </span>
-          </div>
         </div>
       </main>
 
@@ -292,3 +283,4 @@ export default function LoginPage({ campus }) {
     </div>
   )
 }
+
