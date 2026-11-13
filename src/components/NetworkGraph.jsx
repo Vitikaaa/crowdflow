@@ -26,12 +26,13 @@ export default function NetworkGraph({ regions, edges, selectedId, onSelect }) {
           <Compass size={18} className="text-ink/70" />
           <h3 className="font-extrabold text-base text-ink">Campus Digital Twin Network</h3>
         </div>
-        <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-ink/70">
+        <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-ink/85">
           <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-full bg-white border border-ink/30" /> Normal (&lt;70%)</span>
           <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-full bg-peach border border-coral" /> Moderate</span>
           <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-full bg-coral" /> High (70-85%)</span>
           <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-full bg-ink" /> Critical (&gt;85%)</span>
         </div>
+
       </div>
 
       <div className="w-full overflow-x-auto">
@@ -206,12 +207,13 @@ export default function NetworkGraph({ regions, edges, selectedId, onSelect }) {
         </svg>
       </div>
 
-      <div className="mt-2 flex items-center justify-between text-xs text-ink/70 border-t border-ink/10 pt-2 px-1">
-        <p className="flex items-center gap-1.5 font-medium">
+      <div className="mt-2 flex items-center justify-between text-xs text-ink/85 font-medium border-t border-ink/10 pt-2 px-1">
+        <p className="flex items-center gap-1.5">
           <Users size={13} /> Click any node to inspect directional network flow, queue length, and 15-min forecast.
         </p>
-        <span className="font-semibold text-ink">Corridor dashed: Primary Redirection Link</span>
+        <span className="font-bold text-ink">Corridor dashed: Primary Redirection Link</span>
       </div>
+
     </div>
   )
 }

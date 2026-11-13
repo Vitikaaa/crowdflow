@@ -1,5 +1,30 @@
-@tailwind base; @tailwind components; @tailwind utilities;
-body { @apply bg-cream text-ink font-sans antialiased; }
-.card { @apply bg-white/70 rounded-card shadow-soft p-5 sm:p-6 transition duration-200 hover:shadow-lg; }
-.btn { @apply inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition duration-150 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-coral; }
-.skeleton { @apply animate-pulse bg-peach/60 rounded-2xl; }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .card {
+    @apply bg-white/85 rounded-card shadow-soft p-5 sm:p-6 transition duration-200 hover:shadow-lg text-ink;
+  }
+  .card.card-dark,
+  .card-dark {
+    background-color: #190933 !important;
+    color: #FFF5E0 !important;
+  }
+  .btn {
+    @apply inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition duration-150 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-coral;
+  }
+  .skeleton {
+    @apply animate-pulse bg-peach/60 rounded-2xl;
+  }
+}
+
+.card.card-dark,
+.card-dark {
+  background-color: #190933 !important;
+  color: #FFF5E0 !important;
+}
+
+body {
+  @apply bg-cream text-ink font-sans antialiased;
+}

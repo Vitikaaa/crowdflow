@@ -48,7 +48,7 @@ export default function OrchestrationPage({ campus }) {
       {/* Header */}
       <header className="flex flex-wrap items-center justify-between gap-4 bg-white/70 p-5 rounded-3xl border border-ink/10 shadow-soft">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-ink/70">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-ink/85">
             <span className="inline-block size-2 rounded-full bg-emerald-500 animate-pulse" />
             <span>Constrained Optimization Engine</span>
             <span>·</span>
@@ -57,7 +57,7 @@ export default function OrchestrationPage({ campus }) {
           <h1 className="text-2xl sm:text-3xl font-black text-ink mt-0.5">
             Network-Aware Decision Orchestration
           </h1>
-          <p className="text-xs text-ink/70 mt-1 max-w-2xl">
+          <p className="text-xs font-medium text-ink/85 mt-1 max-w-2xl">
             Ranks interventions by mathematical objective function J(a), enforces operational constraints
             (staff ceilings & downstream safety limits), and synthesizes multi-channel campus dispatches.
           </p>
@@ -84,7 +84,7 @@ export default function OrchestrationPage({ campus }) {
             <Sparkles size={20} className="text-coral" />
             Ranked Interventions (Constrained Multi-Objective J)
           </h2>
-          <span className="text-xs font-semibold text-ink/70">
+          <span className="text-xs font-bold text-ink/85">
             Sorted by Lowest Loss (Optimal Network Balance)
           </span>
         </div>
@@ -101,10 +101,10 @@ export default function OrchestrationPage({ campus }) {
                 key={sc.key}
                 className={`card flex flex-col justify-between transition-all duration-200 ${
                   isTop
-                    ? 'bg-ink text-cream border-2 border-coral shadow-lg'
+                    ? '!bg-ink card-dark text-cream border-2 border-coral shadow-lg'
                     : isFeasible
-                    ? 'bg-white/80 border border-ink/10'
-                    : 'bg-red-50/50 border border-red-200 opacity-80'
+                    ? 'bg-white/90 border border-ink/10'
+                    : 'bg-red-50/50 border border-red-200'
                 }`}
               >
                 <div>
@@ -120,7 +120,7 @@ export default function OrchestrationPage({ campus }) {
                     >
                       {isTop ? '★ Top Recommendation' : `Rank #${idx + 1}`}
                     </span>
-                    <span className={isTop ? 'text-cream/80' : 'text-ink/60 font-semibold'}>
+                    <span className={isTop ? 'text-cream font-extrabold' : 'text-ink/85 font-black'}>
                       J Score: {sc.objectiveScore}
                     </span>
                   </div>
@@ -128,24 +128,24 @@ export default function OrchestrationPage({ campus }) {
                   <h3 className={`mt-3 text-lg font-black ${isTop ? 'text-cream' : 'text-ink'}`}>
                     {sc.label}
                   </h3>
-                  <p className={`mt-1 text-xs ${isTop ? 'text-cream/75' : 'text-ink/70'}`}>
+                  <p className={`mt-1 text-xs leading-relaxed ${isTop ? 'text-cream/90 font-medium' : 'text-ink/85 font-medium'}`}>
                     {sc.reasoning}
                   </p>
 
                   {/* Objective Breakdown */}
                   {sc.objectiveBreakdown && (
-                    <div className="mt-3 grid grid-cols-3 gap-1.5 text-[10px] opacity-80">
-                      <div className="rounded-lg bg-black/10 p-1.5">
-                        <span className="block opacity-70">Exceedance</span>
-                        <span className="font-bold">{sc.objectiveBreakdown.capacityPenalty}</span>
+                    <div className="mt-3 grid grid-cols-3 gap-1.5 text-[10px]">
+                      <div className={`rounded-lg p-1.5 ${isTop ? 'bg-white/10 text-cream' : 'bg-ink/5 text-ink'}`}>
+                        <span className={`block font-bold ${isTop ? 'text-coral' : 'text-ink/80'}`}>Exceedance</span>
+                        <span className="font-black text-xs">{sc.objectiveBreakdown.capacityPenalty}</span>
                       </div>
-                      <div className="rounded-lg bg-black/10 p-1.5">
-                        <span className="block opacity-70">Downstream</span>
-                        <span className="font-bold">{sc.objectiveBreakdown.downstreamPenalty}</span>
+                      <div className={`rounded-lg p-1.5 ${isTop ? 'bg-white/10 text-cream' : 'bg-ink/5 text-ink'}`}>
+                        <span className={`block font-bold ${isTop ? 'text-coral' : 'text-ink/80'}`}>Downstream</span>
+                        <span className="font-black text-xs">{sc.objectiveBreakdown.downstreamPenalty}</span>
                       </div>
-                      <div className="rounded-lg bg-black/10 p-1.5">
-                        <span className="block opacity-70">Cost</span>
-                        <span className="font-bold">{sc.objectiveBreakdown.costPenalty}</span>
+                      <div className={`rounded-lg p-1.5 ${isTop ? 'bg-white/10 text-cream' : 'bg-ink/5 text-ink'}`}>
+                        <span className={`block font-bold ${isTop ? 'text-coral' : 'text-ink/80'}`}>Cost</span>
+                        <span className="font-black text-xs">{sc.objectiveBreakdown.costPenalty}</span>
                       </div>
                     </div>
                   )}
@@ -153,27 +153,27 @@ export default function OrchestrationPage({ campus }) {
                   {/* Key Metrics */}
                   <div className="mt-4 space-y-1.5 text-xs">
                     <div className="flex justify-between">
-                      <span className="opacity-70">Target Peak Occ:</span>
-                      <span className="font-extrabold">{m.peakOccupancy} students</span>
+                      <span className={isTop ? 'text-cream/80 font-medium' : 'text-ink/80 font-medium'}>Target Peak Occ:</span>
+                      <span className={`font-black ${isTop ? 'text-cream' : 'text-ink'}`}>{m.peakOccupancy} students</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="opacity-70">Downstream Load:</span>
-                      <span className="font-semibold">{m.downstreamDetails || `${m.downstreamPeakOcc} pax`}</span>
+                      <span className={isTop ? 'text-cream/80 font-medium' : 'text-ink/80 font-medium'}>Downstream Load:</span>
+                      <span className={`font-semibold ${isTop ? 'text-cream' : 'text-ink'}`}>{m.downstreamDetails || `${m.downstreamPeakOcc} pax`}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="opacity-70">Required Staff:</span>
-                      <span className="font-semibold">{m.requiredStaff} personnel</span>
+                      <span className={isTop ? 'text-cream/80 font-medium' : 'text-ink/80 font-medium'}>Required Staff:</span>
+                      <span className={`font-semibold ${isTop ? 'text-cream' : 'text-ink'}`}>{m.requiredStaff} personnel</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="opacity-70">Downstream Risk:</span>
+                      <span className={isTop ? 'text-cream/80 font-medium' : 'text-ink/80 font-medium'}>Downstream Risk:</span>
                       <span
-                        className={`font-bold ${
+                        className={`font-black ${
                           m.downstreamRisk === 'Critical'
                             ? 'text-red-400'
                             : m.downstreamRisk === 'High'
                             ? 'text-coral'
                             : isTop
-                            ? 'text-emerald-300'
+                            ? 'text-emerald-400'
                             : 'text-emerald-700'
                         }`}
                       >
@@ -183,8 +183,8 @@ export default function OrchestrationPage({ campus }) {
                   </div>
                 </div>
 
-                <div className="mt-5 pt-3 border-t border-ink/10 flex items-center justify-between">
-                  <span className="text-[11px] font-semibold opacity-75">
+                <div className={`mt-5 pt-3 border-t ${isTop ? 'border-white/15' : 'border-ink/10'} flex items-center justify-between`}>
+                  <span className={`text-[11px] font-bold ${isTop ? 'text-cream/90' : 'text-ink/80'}`}>
                     {isFeasible ? 'Constraints Passed' : 'Infeasible Violation'}
                   </span>
                   <button
@@ -202,6 +202,7 @@ export default function OrchestrationPage({ campus }) {
                   </button>
                 </div>
               </div>
+
             )
           })}
         </div>
@@ -212,7 +213,7 @@ export default function OrchestrationPage({ campus }) {
         <h2 className="text-lg font-black text-ink mb-1">
           Active Multi-Channel Dispatch Packages (Simulated Preview)
         </h2>
-        <p className="text-xs text-ink/70 mb-4">
+        <p className="text-xs font-medium text-ink/80 mb-4">
           Synchronized actuation across physical campus LED displays, marshal radios, and student mobile apps
         </p>
 
@@ -296,14 +297,14 @@ export default function OrchestrationPage({ campus }) {
       {/* Intervention Execution Pipeline & History */}
       <section className="card">
         <h2 className="text-lg font-black text-ink mb-1">Intervention History & Execution Audit</h2>
-        <p className="text-xs text-ink/70 mb-4">
+        <p className="text-xs font-medium text-ink/80 mb-4">
           Time-stamped audit log of proposed, dispatched, active, and completed interventions
         </p>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-ink/10 text-xs font-bold text-ink/60 uppercase tracking-wider">
+              <tr className="border-b border-ink/10 text-xs font-black text-ink/80 uppercase tracking-wider">
                 <th className="py-2.5 px-3">Intervention</th>
                 <th className="py-2.5 px-3">Target Zone</th>
                 <th className="py-2.5 px-3">Timestamp</th>
@@ -331,14 +332,14 @@ export default function OrchestrationPage({ campus }) {
               {interventionHistory.map((inv) => (
                 <tr key={inv.id} className="hover:bg-peach/20 transition">
                   <td className="py-2.5 px-3 font-bold text-ink">{inv.label}</td>
-                  <td className="py-2.5 px-3">{getRegionById(inv.regionId || inv.targetRegionId).name}</td>
-                  <td className="py-2.5 px-3 text-xs text-ink/70">{inv.dispatchedAt}</td>
+                  <td className="py-2.5 px-3 font-semibold text-ink/90">{getRegionById(inv.regionId || inv.targetRegionId).name}</td>
+                  <td className="py-2.5 px-3 text-xs font-bold text-ink/75">{inv.dispatchedAt}</td>
                   <td className="py-2.5 px-3">
                     <span className="rounded-full bg-ink/10 text-ink px-2.5 py-0.5 text-xs font-bold">
                       {inv.status}
                     </span>
                   </td>
-                  <td className="py-2.5 px-3 text-xs text-ink/80">
+                  <td className="py-2.5 px-3 text-xs font-medium text-ink/90">
                     {inv.outcomeEvaluation || 'Completed as scheduled.'}
                   </td>
                 </tr>

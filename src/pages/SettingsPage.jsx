@@ -43,14 +43,14 @@ export default function SettingsPage({ campus }) {
       {/* Header */}
       <header className="flex flex-wrap items-center justify-between gap-4 bg-white/70 p-5 rounded-3xl border border-ink/10 shadow-soft">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-ink/70">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-ink/85">
             <span className="inline-block size-2 rounded-full bg-emerald-500" />
             <span>Campus Digital Twin Configuration</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-ink mt-0.5">
             System Settings & Model Parameters
           </h1>
-          <p className="text-xs text-ink/70 mt-1">
+          <p className="text-xs font-medium text-ink/85 mt-1">
             Configure regional physical limits, multi-objective optimization weights, sensor fusion coefficients, and demo sandbox
           </p>
         </div>
@@ -78,7 +78,7 @@ export default function SettingsPage({ campus }) {
               <Sliders size={18} className="text-coral" />
               Multi-Objective Function Weights J(a)
             </h2>
-            <p className="text-xs text-ink/70">
+            <p className="text-xs font-medium text-ink/80">
               Tune optimization penalties for ranking candidate interventions. Lower loss = preferred decision.
             </p>
           </div>
@@ -102,7 +102,7 @@ export default function SettingsPage({ campus }) {
               onChange={(e) => handleWeightChange('capacityExceedance', e.target.value)}
               className="w-full accent-coral cursor-pointer"
             />
-            <p className="text-[11px] text-ink/60 mt-1">Heavy penalty for exceeding safety room limits</p>
+            <p className="text-[11px] font-semibold text-ink/80 mt-1">Heavy penalty for exceeding safety room limits</p>
           </div>
 
           {/* Downstream Risk Weight */}
@@ -119,7 +119,7 @@ export default function SettingsPage({ campus }) {
               onChange={(e) => handleWeightChange('downstreamRisk', e.target.value)}
               className="w-full accent-coral cursor-pointer"
             />
-            <p className="text-[11px] text-ink/60 mt-1">Prevents interventions that overload destination zones</p>
+            <p className="text-[11px] font-semibold text-ink/80 mt-1">Prevents interventions that overload destination zones</p>
           </div>
 
           {/* Wait Time Weight */}
@@ -136,7 +136,7 @@ export default function SettingsPage({ campus }) {
               onChange={(e) => handleWeightChange('waitTime', e.target.value)}
               className="w-full accent-coral cursor-pointer"
             />
-            <p className="text-[11px] text-ink/60 mt-1">Penalizes long queue wait times</p>
+            <p className="text-[11px] font-semibold text-ink/80 mt-1">Penalizes long queue wait times</p>
           </div>
 
           {/* Operational Cost Weight */}
@@ -153,7 +153,7 @@ export default function SettingsPage({ campus }) {
               onChange={(e) => handleWeightChange('operationalCost', e.target.value)}
               className="w-full accent-coral cursor-pointer"
             />
-            <p className="text-[11px] text-ink/60 mt-1">Considers staff budget and counter activation cost</p>
+            <p className="text-[11px] font-semibold text-ink/80 mt-1">Considers staff budget and counter activation cost</p>
           </div>
 
           {/* Walking Distance Penalty */}
@@ -170,14 +170,14 @@ export default function SettingsPage({ campus }) {
               onChange={(e) => handleWeightChange('walkingImpact', e.target.value)}
               className="w-full accent-coral cursor-pointer"
             />
-            <p className="text-[11px] text-ink/60 mt-1">Penalizes student walking distance detour</p>
+            <p className="text-[11px] font-semibold text-ink/80 mt-1">Penalizes student walking distance detour</p>
           </div>
 
           {/* Reset weights */}
           <div className="rounded-2xl bg-white p-4 border border-ink/10 flex flex-col justify-between">
             <div>
               <p className="text-xs font-bold text-ink">Restore Factory Weights</p>
-              <p className="text-[11px] text-ink/70 mt-1">
+              <p className="text-[11px] font-medium text-ink/80 mt-1">
                 Revert objective coefficients to baseline research configuration.
               </p>
             </div>
@@ -194,7 +194,7 @@ export default function SettingsPage({ campus }) {
       {/* Sensor Fusion Calibration */}
       <section className="card bg-white/90">
         <h2 className="text-lg font-black text-ink mb-1">Sensor Fusion Parameters</h2>
-        <p className="text-xs text-ink/70 mb-4">
+        <p className="text-xs font-medium text-ink/80 mb-4">
           Calibration factors for CCTV optical detection, Wi-Fi device attenuation, and Turnstiles
         </p>
 
@@ -203,7 +203,7 @@ export default function SettingsPage({ campus }) {
             <label className="text-xs font-bold text-ink uppercase tracking-wider block mb-1">
               Wi-Fi Device Multiplier
             </label>
-            <p className="text-xs text-ink/70 mb-2">Devices per human student (smartphones, laptops):</p>
+            <p className="text-xs font-medium text-ink/80 mb-2">Devices per human student (smartphones, laptops):</p>
             <input
               type="number"
               step="0.05"
@@ -219,7 +219,7 @@ export default function SettingsPage({ campus }) {
             <label className="text-xs font-bold text-ink uppercase tracking-wider block mb-1">
               CCTV Min. Confidence Cutoff
             </label>
-            <p className="text-xs text-ink/70 mb-2">Rejection threshold for optical detections (%):</p>
+            <p className="text-xs font-medium text-ink/80 mb-2">Rejection threshold for optical detections (%):</p>
             <input
               type="number"
               min="50"
@@ -239,18 +239,18 @@ export default function SettingsPage({ campus }) {
                 <CheckCircle2 size={16} /> All 3 Modalities Synchronized
               </p>
             </div>
-            <p className="text-[11px] text-ink/60 mt-2">Temporal Kalman alignment active.</p>
+            <p className="text-[11px] font-bold text-ink/80 mt-2">Temporal Kalman alignment active.</p>
           </div>
         </div>
       </section>
 
       {/* Demonstration Sandbox Controls */}
-      <section className="card bg-ink text-cream">
+      <section className="card !bg-ink card-dark text-cream">
         <div className="flex items-center gap-2 text-coral text-xs font-bold uppercase tracking-wider mb-1">
           <Sparkles size={16} /> Demonstration & Research Sandbox
         </div>
         <h2 className="text-xl font-black text-cream">Demonstration Controls</h2>
-        <p className="text-xs text-cream/70 mb-5">
+        <p className="text-xs text-cream/90 font-medium mb-5">
           Simulate real-time operational events, class dismissals, and full data resets for live walk-throughs
         </p>
 

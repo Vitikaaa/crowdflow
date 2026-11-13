@@ -98,9 +98,10 @@ export default function Sidebar({ open, onClose, alertCount = 0 }) {
               OR
             </span>
             <div className="text-xs min-w-0">
-              <p className="font-semibold truncate">Campus Operations</p>
-              <p className="opacity-70 text-[11px] truncate">Control Room · Mode: Live Twin</p>
+              <p className="font-bold truncate text-cream">Campus Operations</p>
+              <p className="text-cream/80 font-medium text-[11px] truncate">Control Room · Mode: Live Twin</p>
             </div>
+
           </div>
         </div>
       </aside>

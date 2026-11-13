@@ -37,14 +37,14 @@ export default function AlertsPage({ campus }) {
       {/* Header */}
       <header className="flex flex-wrap items-center justify-between gap-4 bg-white/70 p-5 rounded-3xl border border-ink/10 shadow-soft">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-ink/70">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-ink/85">
             <span className="inline-block size-2 rounded-full bg-coral animate-pulse" />
             <span>Alerts & Incident Management</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-ink mt-0.5">
             Active Campus Incident Alerts ({activeAlerts.length})
           </h1>
-          <p className="text-xs text-ink/70 mt-1">
+          <p className="text-xs font-medium text-ink/85 mt-1">
             Real-time notifications for capacity exceedance, arrival surges, sensor anomalies, and network cascades
           </p>
         </div>
@@ -109,11 +109,11 @@ export default function AlertsPage({ campus }) {
                     >
                       {alert.severity} priority
                     </span>
-                    <span className="text-xs font-semibold opacity-60">· {alert.time}</span>
+                    <span className="text-xs font-bold text-ink/75">· {alert.time}</span>
                   </div>
 
                   <h3 className="font-extrabold text-base text-ink mt-1">{alert.title}</h3>
-                  <p className="text-xs text-ink/80 mt-1 leading-relaxed">{alert.detail}</p>
+                  <p className="text-xs font-medium text-ink/90 mt-1 leading-relaxed">{alert.detail}</p>
                 </div>
               </div>
 
@@ -152,7 +152,7 @@ export default function AlertsPage({ campus }) {
           <div className="rounded-3xl bg-white/70 p-12 text-center border border-ink/10 shadow-soft">
             <CheckCircle2 size={40} className="mx-auto text-emerald-600 mb-2" />
             <h3 className="text-lg font-bold text-ink">All Clear in this Category</h3>
-            <p className="text-xs text-ink/70 mt-1">
+            <p className="text-xs font-medium text-ink/80 mt-1">
               No active warnings or threshold exceedances matching the selected filter.
             </p>
           </div>

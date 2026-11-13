@@ -63,9 +63,10 @@ export default function App() {
         </main>
 
         {/* Minimal Footer */}
-        <footer className="border-t border-ink/10 py-4 px-6 text-center text-xs text-ink/60">
+        <footer className="border-t border-ink/10 py-4 px-6 text-center text-xs font-semibold text-ink/80">
           CrowdFlow · A System and Method for Predictive Counterfactual Orchestration of Crowd Flow Across Interconnected Service Regions
         </footer>
+
       </div>
     </div>
   )

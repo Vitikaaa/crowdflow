@@ -184,7 +184,7 @@ export default function CounterfactualLab({ campus }) {
           <h1 className="text-2xl sm:text-3xl font-black text-ink mt-0.5">
             Counterfactual Intervention Laboratory
           </h1>
-          <p className="text-xs text-ink/70 mt-1 max-w-2xl">
+          <p className="text-xs font-medium text-ink/85 mt-1 max-w-2xl">
             Simulate alternative future trajectories before taking action. Models pedestrian flow propagation,
             network transit lags, and downstream capacity ripple effects across connected campus zones.
           </p>
@@ -214,9 +214,9 @@ export default function CounterfactualLab({ campus }) {
             <p className="font-extrabold text-ink text-sm">
               Network Flow Conservation & Downstream Coupling
             </p>
-            <p className="text-ink/75">
-              Redirecting crowd from <span className="font-bold">{targetNode.name}</span> transfers demand to{' '}
-              <span className="font-bold">{destNode.name}</span> after transit walking delay (2.5m). The simulator
+            <p className="text-ink/90 font-medium">
+              Redirecting crowd from <span className="font-bold text-ink">{targetNode.name}</span> transfers demand to{' '}
+              <span className="font-bold text-ink">{destNode.name}</span> after transit walking delay (2.5m). The simulator
               verifies whether {destNode.name} has sufficient headroom ({destNode.capacity} max capacity).
             </p>
           </div>
@@ -253,7 +253,7 @@ export default function CounterfactualLab({ campus }) {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {/* Target Region */}
           <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-ink/70 block mb-1.5">
+            <label className="text-xs font-bold uppercase tracking-wider text-ink/85 block mb-1.5">
               Target Congested Region
             </label>
             <select
@@ -271,7 +271,7 @@ export default function CounterfactualLab({ campus }) {
 
           {/* Destination Region */}
           <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-ink/70 block mb-1.5">
+            <label className="text-xs font-bold uppercase tracking-wider text-ink/85 block mb-1.5">
               Eligible Destination Region
             </label>
             <select
@@ -291,7 +291,7 @@ export default function CounterfactualLab({ campus }) {
 
           {/* Redirection Fraction Slider */}
           <div>
-            <div className="flex justify-between text-xs font-bold text-ink/70 mb-1.5">
+            <div className="flex justify-between text-xs font-bold text-ink/85 mb-1.5">
               <span className="uppercase tracking-wider">Demand Redirect Ratio</span>
               <span className="text-coral font-black text-sm">{redirectPct}%</span>
             </div>
@@ -304,12 +304,12 @@ export default function CounterfactualLab({ campus }) {
               onChange={(e) => setRedirectPct(Number(e.target.value))}
               className="w-full accent-coral cursor-pointer"
             />
-            <p className="text-[11px] text-ink/60 mt-1">Diverts incoming pedestrian arrivals</p>
+            <p className="text-[11px] font-semibold text-ink/80 mt-1">Diverts incoming pedestrian arrivals</p>
           </div>
 
           {/* Additional Counters */}
           <div>
-            <div className="flex justify-between text-xs font-bold text-ink/70 mb-1.5">
+            <div className="flex justify-between text-xs font-bold text-ink/85 mb-1.5">
               <span className="uppercase tracking-wider">Extra Service Counters</span>
               <span className="text-ink font-black text-sm">+{additionalCounters}</span>
             </div>
@@ -322,7 +322,7 @@ export default function CounterfactualLab({ campus }) {
               onChange={(e) => setAdditionalCounters(Number(e.target.value))}
               className="w-full accent-ink cursor-pointer"
             />
-            <p className="text-[11px] text-ink/60 mt-1">Adds +6 pax/5min clearance capacity each</p>
+            <p className="text-[11px] font-semibold text-ink/80 mt-1">Adds +6 pax/5min clearance capacity each</p>
           </div>
         </div>
       </section>
@@ -363,7 +363,7 @@ export default function CounterfactualLab({ campus }) {
               Synchronized Trajectory Comparison · Focus:{' '}
               <span className="text-coral">{focusedNode.name}</span>
             </h2>
-            <p className="text-xs text-ink/70">
+            <p className="text-xs font-medium text-ink/80">
               {chartFocus === 'target'
                 ? `Simulated crowd occupancy at ${targetNode.name} across competing counterfactual interventions`
                 : `Downstream impact at ${destNode.name}: verifying whether redirected flow safely absorbs or causes cascade`}
@@ -435,14 +435,14 @@ export default function CounterfactualLab({ campus }) {
         <h2 className="text-xl font-black text-ink mb-1">
           Counterfactual Comparison Matrix (Scenarios A through F)
         </h2>
-        <p className="text-xs text-ink/70 mb-4">
+        <p className="text-xs font-medium text-ink/80 mb-4">
           Side-by-side evaluation of target reduction, downstream load, queue wait, resource costs, and feasibility
         </p>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-ink/10 text-xs font-bold text-ink/60 uppercase tracking-wider">
+              <tr className="border-b border-ink/10 text-xs font-black text-ink/80 uppercase tracking-wider">
                 <th className="py-2.5 px-3">Scenario</th>
                 <th className="py-2.5 px-3">Peak @ Target</th>
                 <th className="py-2.5 px-3">Reduction vs Base</th>
@@ -470,7 +470,7 @@ export default function CounterfactualLab({ campus }) {
                         />
                         <div>
                           <p className="font-extrabold text-ink">{sc.label}</p>
-                          <p className="text-[11px] text-ink/70">{sc.description}</p>
+                          <p className="text-[11px] font-medium text-ink/85">{sc.description}</p>
                         </div>
                       </div>
                     </td>
@@ -481,7 +481,7 @@ export default function CounterfactualLab({ campus }) {
 
                     <td className="py-3 px-3 font-bold">
                       {isBaseline ? (
-                        <span className="text-xs text-ink/60">Baseline</span>
+                        <span className="text-xs font-bold text-ink/80">Baseline</span>
                       ) : (
                         <span className="text-emerald-700 flex items-center gap-0.5">
                           <TrendingDown size={14} /> -{d.occupancyPercentReduction}% ({d.occupancyDelta} pax)
@@ -513,7 +513,7 @@ export default function CounterfactualLab({ campus }) {
                       </span>
                     </td>
 
-                    <td className="py-3 px-3 text-xs text-ink/70">
+                    <td className="py-3 px-3 text-xs font-bold text-ink/85">
                       {m.walkingDistanceImpactMeters > 0
                         ? `+${m.walkingDistanceImpactMeters}m (+${m.additionalWalkingTimeMin}m)`
                         : '0m'}

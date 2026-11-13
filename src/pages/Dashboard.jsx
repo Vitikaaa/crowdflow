@@ -113,7 +113,7 @@ export default function Dashboard({ campus }) {
       {/* Header and Simulation Sandbox Toolbar */}
       <header className="flex flex-wrap items-center justify-between gap-4 bg-white/70 backdrop-blur-xs p-5 rounded-3xl border border-ink/10 shadow-soft">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-ink/70">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-ink/85">
             <span className="inline-block size-2 rounded-full bg-emerald-500 animate-pulse" />
             <span>Digital Twin Active</span>
             <span>·</span>
@@ -217,7 +217,7 @@ export default function Dashboard({ campus }) {
         <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
           <div>
             <h2 className="text-lg font-bold text-ink">Campus Interconnected Digital Twin</h2>
-            <p className="text-xs text-ink/70">
+            <p className="text-xs font-medium text-ink/80">
               Directed graph of 7 service regions. Edge arrows show directional flow rates and transit walking times.
             </p>
           </div>
@@ -248,7 +248,7 @@ export default function Dashboard({ campus }) {
               <h2 className="text-lg font-bold text-ink">
                 {selectedRegion.name}: Observed & Multi-Horizon Forecast
               </h2>
-              <p className="text-xs text-ink/70">
+              <p className="text-xs font-medium text-ink/80">
                 Autoregressive network-lag model with 95% calibrated confidence envelope
               </p>
             </div>
@@ -282,15 +282,15 @@ export default function Dashboard({ campus }) {
                     isCrit ? 'bg-coral/30 border-coral text-ink' : 'bg-peach/50 border-ink/10'
                   }`}
                 >
-                  <p className="text-xs font-semibold opacity-70">+{m} min Horizon</p>
+                  <p className="text-xs font-bold text-ink/85">+{m} min Horizon</p>
                   <p className="text-2xl font-black mt-0.5">{val}</p>
-                  <p className="text-[11px] font-semibold opacity-75">{p}% Capacity</p>
+                  <p className="text-[11px] font-bold text-ink/80">{p}% Capacity</p>
                 </div>
               )
             })}
           </div>
 
-          <div className="mt-4 flex flex-wrap items-center justify-between text-xs opacity-75 border-t border-ink/10 pt-3">
+          <div className="mt-4 flex flex-wrap items-center justify-between text-xs font-semibold text-ink/85 border-t border-ink/10 pt-3">
             <p className="flex items-center gap-1.5">
               <Clock size={13} />
               Recent residual error: E(t) = {observationHistory.slice(-1)[0]?.error ?? -2} · Rolling MAE: {errorMetrics.mae || 2.8}
@@ -310,11 +310,11 @@ export default function Dashboard({ campus }) {
         <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
           <div>
             <h2 className="text-lg font-bold text-ink">Regional Congestion Risk Ranking</h2>
-            <p className="text-xs text-ink/70">
+            <p className="text-xs font-medium text-ink/80">
               Ranked by predicted capacity exceedance, time to threshold breach, queue growth, and downstream impact
             </p>
           </div>
-          <span className="text-xs font-semibold bg-peach px-2.5 py-1 rounded-full text-ink">
+          <span className="text-xs font-bold bg-peach px-2.5 py-1 rounded-full text-ink">
             Evaluated for Horizon +10 min
           </span>
         </div>
@@ -322,7 +322,7 @@ export default function Dashboard({ campus }) {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-ink/10 text-xs font-extrabold text-ink/60 uppercase tracking-wider">
+              <tr className="border-b border-ink/10 text-xs font-black text-ink/80 uppercase tracking-wider">
                 <th className="py-2.5 px-3">Rank</th>
                 <th className="py-2.5 px-3">Service Region</th>
                 <th className="py-2.5 px-3">Current</th>
@@ -380,10 +380,10 @@ export default function Dashboard({ campus }) {
                         {row.risk}
                       </span>
                     </td>
-                    <td className="py-2.5 px-3 text-xs font-medium text-ink/80">
+                    <td className="py-2.5 px-3 text-xs font-semibold text-ink/90">
                       {row.timeToBreach}
                     </td>
-                    <td className="py-2.5 px-3 text-xs text-ink/70">
+                    <td className="py-2.5 px-3 text-xs font-medium text-ink/85">
                       {row.region.id === 'canteen-a' ? 'Corridor to Canteen B' : 'Local catchment'}
                     </td>
                     <td className="py-2.5 px-3 text-right">
@@ -406,7 +406,7 @@ export default function Dashboard({ campus }) {
       <section className="grid gap-6 lg:grid-cols-2">
         {/* Recommended Intervention Card */}
         {topRec ? (
-          <div className="card bg-ink text-cream relative overflow-hidden">
+          <div className="card !bg-ink card-dark text-cream relative overflow-hidden">
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-1.5 text-coral text-xs font-bold uppercase tracking-wider">
                 <Sparkles size={16} /> Recommended Decision · Horizon +10m
@@ -417,23 +417,23 @@ export default function Dashboard({ campus }) {
             </div>
 
             <h3 className="mt-3 text-2xl font-black">{topRec.label}</h3>
-            <p className="mt-1.5 text-sm opacity-80">{topRec.reasoning}</p>
+            <p className="mt-1.5 text-sm text-cream/90 font-medium">{topRec.reasoning}</p>
 
             <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
               <div className="rounded-xl bg-white/10 p-2.5">
-                <p className="opacity-70">Target Peak</p>
+                <p className="text-cream/80 font-bold text-[11px]">Target Peak</p>
                 <p className="text-base font-extrabold mt-0.5">{topRec.metrics.peakOccupancy} students</p>
-                <p className="text-[11px] text-coral">~{topRec.deltas?.occupancyPercentReduction || 22}% reduction</p>
+                <p className="text-[11px] text-coral font-bold">~{topRec.deltas?.occupancyPercentReduction || 22}% reduction</p>
               </div>
               <div className="rounded-xl bg-white/10 p-2.5">
-                <p className="opacity-70">Downstream Risk</p>
+                <p className="text-cream/80 font-bold text-[11px]">Downstream Risk</p>
                 <p className="text-base font-extrabold mt-0.5">{topRec.metrics.downstreamRisk}</p>
-                <p className="text-[11px] opacity-75">{topRec.metrics.downstreamPeakOcc} pax at dest</p>
+                <p className="text-[11px] text-cream/85 font-medium">{topRec.metrics.downstreamPeakOcc} pax at dest</p>
               </div>
               <div className="rounded-xl bg-white/10 p-2.5">
-                <p className="opacity-70">Staff Cost</p>
+                <p className="text-cream/80 font-bold text-[11px]">Staff Cost</p>
                 <p className="text-base font-extrabold mt-0.5">{topRec.metrics.requiredStaff} staff</p>
-                <p className="text-[11px] opacity-75">Cost: {topRec.metrics.resourceCost} pts</p>
+                <p className="text-[11px] text-cream/85 font-medium">Cost: {topRec.metrics.resourceCost} pts</p>
               </div>
             </div>
 
@@ -462,7 +462,7 @@ export default function Dashboard({ campus }) {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-lg font-bold text-ink">Active System Alerts</h2>
-              <p className="text-xs text-ink/70">Threshold crossings, inflow spikes, and cascade alerts</p>
+              <p className="text-xs font-medium text-ink/80">Threshold crossings, inflow spikes, and cascade alerts</p>
             </div>
             <Link to="/alerts" className="text-xs font-bold text-coral hover:underline">
               View All ({alerts.length})
@@ -474,7 +474,7 @@ export default function Dashboard({ campus }) {
               <AlertCard key={a.id} alert={a} onDismiss={dismissAlert} />
             ))}
             {alerts.length === 0 && (
-              <div className="rounded-2xl bg-white/60 p-6 text-center text-sm opacity-70">
+              <div className="rounded-2xl bg-white/60 p-6 text-center text-sm font-semibold text-ink/80">
                 All clear. No active alerts across campus service zones.
               </div>
             )}
